@@ -1,0 +1,40 @@
+---
+- hosts: kubernetes
+  become: yes
+  vars:
+    chart_name: mychart
+    chart_repo: https://example.com/charts
+    chart_version: 0.1.0
+    release_name: my-release
+    namespace: default
+  tasks:
+  - name: Add chart repository
+    helm_repository:
+      name: "{{ chart_repo }}"
+      url: "{{ chart_repo }}"
+  - name: Install chart
+    helm:
+      name: "{{ release_name }}"
+      chart: "{{ chart_name }}"
+      version: "{{ chart_version }}"
+      namespace: "{{ namespace }}"
+      repository: "{{ chart_repo }}"
+      values:
+        - key1: value1
+        - key2: value2
+  - name: Wait for release to be deployed
+    k8s:
+      api_version: v1
+      kind: Deployment
+      namespace: "{{ namespace }}"
+      name: "{{ release_name }}"
+      wait: yes
+      state: present
+  - name: Wait for services to be available
+    k8s:
+      api_version: v1
+      kind: Service
+      namespace: "{{ namespace }}"
+      name: "{{ release_name }}"
+      wait: yes
+      state: present
