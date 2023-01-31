@@ -1,0 +1,45 @@
+---
+- name: Installing memcached
+  hosts: centos, ubuntu
+  become: true
+  tasks:
+  - name: Update package repository for Ubuntu
+    when: ansible_distribution=="Ubuntu"
+    apt:
+      update_cache: yes
+
+  - name: Update package repository for centos
+    when: ansible_distribution=="CentOS"
+    yum:
+      update_cache: yes
+
+  - name: Install memcached package
+    package:
+      name: memcached
+      state: present
+
+  - name: Activating firewall
+    when: ansible_distribution=="Ubuntu"
+    ufw:
+      state: enabled
+
+  - name: Allowing port 11211 for memcached
+    when: ansible_distribution=="Ubuntu"
+    ufw:
+      rule: allow
+      port: 11211
+      proto: tcp
+      state: reloaded
+
+  - name: Activating firewalld
+    when: ansible_distribution=="CentOS"
+    firewalld:
+      state: enabled
+
+  - name: Activating firewalld
+    when: ansible_distribution=="CentOS"
+    firewalld:
+      service: memcached
+      permanent: yes
+      immediate: yes
+      state: enabled
