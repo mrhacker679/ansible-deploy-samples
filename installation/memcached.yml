@@ -41,7 +41,7 @@
   - name: Activating firewalld
     when: ansible_distribution=="CentOS"
     firewalld:
-      service: memcached
+      port: 11211/tcp
       permanent: yes
       immediate: yes
       state: enabled
