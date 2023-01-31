@@ -17,6 +17,8 @@
     package:
       name: memcached
       state: present
+    notify:
+    - restart memcached
 
   - name: Activating firewall
     when: ansible_distribution=="Ubuntu"
@@ -43,3 +45,9 @@
       permanent: yes
       immediate: yes
       state: enabled
+
+  handlers:
+    - name: restart memcached
+      service:
+        name: memcached
+        state: restarted
