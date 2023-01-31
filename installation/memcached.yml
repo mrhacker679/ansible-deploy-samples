@@ -29,7 +29,7 @@
     when: ansible_distribution=="Ubuntu"
     ufw:
       rule: allow
-      port: 11211
+      port: 22/tcp, 11211/tcp
       proto: tcp
       state: reloaded
 
@@ -41,7 +41,7 @@
   - name: Activating firewalld
     when: ansible_distribution=="CentOS"
     firewalld:
-      port: 11211/tcp
+      port: 11211/tcp, 22/tcp
       permanent: yes
       immediate: yes
       state: enabled
